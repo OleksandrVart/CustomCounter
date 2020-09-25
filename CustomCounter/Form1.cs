@@ -51,7 +51,7 @@ namespace CustomCounter
                 calcCount += nextStep;
 
                 WriteTextSafe(calcCount.ToString());
-                logging(calcCount.ToString());
+                Logging.write(calcCount.ToString());
 
                 Thread.Sleep(1000);
             }
@@ -73,19 +73,6 @@ namespace CustomCounter
         private void buttonStop_Click(object sender, EventArgs e)
         {
             countThread.Abort();
-        }
-
-        private void logging(string text)
-        {
-            string filename = @"\counter_logs.txt";
-            string path = Directory.GetCurrentDirectory() + filename;
-            DateTime curDate = DateTime.Now;
-
-            FileStream file = new FileStream(path, FileMode.Append);
-            StreamWriter fnew = new StreamWriter(file, Encoding.GetEncoding(1251));
-
-            fnew.WriteLine(curDate.ToLocalTime() + " - " + text);
-            fnew.Close();
         }
     }
 }
