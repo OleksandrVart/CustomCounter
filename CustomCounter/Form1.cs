@@ -44,7 +44,7 @@ namespace CustomCounter
                         nextStep = 1;
                     }
                 }
-                catch { }
+                catch { nextStep = 1; }
                 finally { }
 
                 int calcCount = int.Parse(result.Text);
