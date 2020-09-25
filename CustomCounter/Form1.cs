@@ -15,7 +15,7 @@ namespace CustomCounter
     public partial class Form1 : Form
     {
         private delegate void SafeCallDelegate(string text);
-        System.Threading.Timer timer;
+        Thread countThread;
 
         public Form1()
         {
@@ -24,31 +24,37 @@ namespace CustomCounter
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            TimerCallback tm = new TimerCallback(Count);
-            timer = new System.Threading.Timer(tm, null, 0, 1000);
+            countThread = new Thread(Count);
+            countThread.Start();
         }
 
         private void Count(object obj)
         {
             int nextStep = 1;
             int step;
-
-            try
+            for (;;)
             {
-                step = int.Parse(counterStep.Text);
-                if (step != 0)
+                try
                 {
-                    nextStep = step;
+                    step = int.Parse(counterStep.Text);
+                    if (step != 0)
+                    {
+                        nextStep = step;
+                    } else {
+                        nextStep = 1;
+                    }
                 }
+                catch { }
+                finally { }
+
+                int calcCount = int.Parse(result.Text);
+                calcCount += nextStep;
+
+                WriteTextSafe(calcCount.ToString());
+                logging(calcCount.ToString());
+
+                Thread.Sleep(1000);
             }
-            catch {}
-            finally {}
-            
-            
-            int calcCount = int.Parse(result.Text);
-            calcCount += nextStep;
-            WriteTextSafe(calcCount.ToString());
-            logging(calcCount.ToString());
         }
 
         private void WriteTextSafe(string text)
@@ -66,7 +72,7 @@ namespace CustomCounter
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
-            timer.Change(Timeout.Infinite, 0);
+            countThread.Abort();
         }
 
         private void logging(string text)
